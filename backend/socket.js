@@ -14,6 +14,8 @@ const setupSocket = (server) => {
   });
 
   const userSocketMap = new Map();
+  global.io = io;
+  global.userSocketMap = userSocketMap;
 
   const disconnect = (socket) => {
     console.log(`Client disconnected: ${socket.id}`);

@@ -9,8 +9,11 @@ import messagesRoutes from "./routes/MessagesRoutes.js";
 import groupRoutes from "./routes/GroupRoutes.js";
 import setupSocket from "./socket.js";
 import friendRequestsRoutes from "./routes/FriendRequestsRoute.js";
+import setupCronJobs from "./lib/cron.js";
 
 dotenv.config();
+
+setupCronJobs();
 
 const app = express();
 const port = process.env.PORT || 3001;

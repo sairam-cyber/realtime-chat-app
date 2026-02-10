@@ -32,6 +32,15 @@ const messageSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  status: {
+    type: String,
+    enum: ["sent", "delivered", "read", "scheduled"],
+    default: "sent",
+  },
+  scheduledAt: {
+    type: Date,
+    required: false,
+  },
 });
 
 const Message = mongoose.model("Messages", messageSchema);

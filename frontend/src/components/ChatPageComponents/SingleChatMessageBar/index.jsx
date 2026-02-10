@@ -4,11 +4,13 @@ import { IoSend } from "react-icons/io5";
 import EmojiPicker from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
 import { IoMdMic } from "react-icons/io";
-
+import { MdScheduleSend } from "react-icons/md";
 import "./SingleChatMessageBar.css";
 import { useAppStore } from "../../../store";
 import { useSocket } from "../../../context/SocketContext";
 import upload from "../../../lib/upload";
+import { apiClient } from "../../../lib/api-client";
+import { SCHEDULE_MESSAGE_ROUTE } from "../../../utils/constants";
 
 const SingleChatMessageBar = () => {
   const emojiRef = useRef();
@@ -182,6 +184,40 @@ const SingleChatMessageBar = () => {
     }
   };
 
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [scheduleMessageText, setScheduleMessageText] = useState("");
+  const [scheduleDate, setScheduleDate] = useState("");
+
+  const handleScheduleMessage = async () => {
+    if (!scheduleMessageText.trim() || !scheduleDate) {
+      alert("Please enter a message and select a date/time.");
+      return;
+    }
+
+    try {
+      const response = await apiClient.post(
+        SCHEDULE_MESSAGE_ROUTE,
+        {
+          recipient: selectedChatData._id,
+          messageType: "text",
+          content: scheduleMessageText,
+          scheduledAt: scheduleDate,
+        },
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        alert("Message scheduled successfully!");
+        setShowScheduleModal(false);
+        setScheduleMessageText("");
+        setScheduleDate("");
+      }
+    } catch (error) {
+      console.error("Error scheduling message:", error);
+      alert(error.response?.data?.error || "Failed to schedule message.");
+    }
+  };
+
   return (
     <div className="message-bar">
       <div className="message-bar-icon">
@@ -201,6 +237,13 @@ const SingleChatMessageBar = () => {
       </div>
       <button className="message-bar-icon" onClick={handleFileAttachmentClick}>
         <GrAttachment />
+      </button>
+      <button
+        className="message-bar-icon"
+        onClick={() => setShowScheduleModal(true)}
+        title="Schedule Message"
+      >
+        <MdScheduleSend />
       </button>
       <button
         className={`message-bar-icon ${isRecording ? "recording" : ""}`}
@@ -231,6 +274,28 @@ const SingleChatMessageBar = () => {
       <div className="message-bar-icon" onClick={handleSendMessage}>
         <IoSend />
       </div>
+
+      {showScheduleModal && (
+        <div className="schedule-modal-overlay">
+          <div className="schedule-modal">
+            <h3>Schedule Message</h3>
+            <textarea
+              placeholder="Type your message here..."
+              value={scheduleMessageText}
+              onChange={(e) => setScheduleMessageText(e.target.value)}
+            />
+            <input
+              type="datetime-local"
+              value={scheduleDate}
+              onChange={(e) => setScheduleDate(e.target.value)}
+            />
+            <div className="schedule-modal-actions">
+              <button onClick={() => setShowScheduleModal(false)}>Cancel</button>
+              <button onClick={handleScheduleMessage}>Schedule</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

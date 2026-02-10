@@ -19,6 +19,7 @@ export const GET_CONTACT_FILES_ROUTE = `${CONTACTS_ROUTES}/get-contact-files`;
 
 export const MESSAGES_ROUTES = "api/messages";
 export const GET_ALL_MESSAGES_ROUTE = `${MESSAGES_ROUTES}/get-messages`;
+export const SCHEDULE_MESSAGE_ROUTE = `${MESSAGES_ROUTES}/schedule-message`;
 
 export const FRIEND_REQUEST_ROUTES = "api/friend-requests";
 export const GET_FRIEND_REQUESTS_ROUTE = `${FRIEND_REQUEST_ROUTES}/get-friend-requests`;
