@@ -96,6 +96,35 @@ const SingleChatMessageContainer = () => {
       scrollRef.current.scrollIntoView({ behavior: "auto" });
     }
   }, [selectedChatMessages]);
+
+  useEffect(() => {
+    const handleChatSearch = (event) => {
+      if (!messageContainerRef.current || !event.detail?.term) return;
+      const term = event.detail.term.toLowerCase();
+
+      const nodes = messageContainerRef.current.querySelectorAll(
+        ".message .message-content"
+      );
+
+      for (const node of nodes) {
+        const text = node.textContent || "";
+        if (text.toLowerCase().includes(term)) {
+          node.scrollIntoView({ behavior: "smooth", block: "center" });
+          node.classList.add("message-search-highlight");
+          setTimeout(() => {
+            node.classList.remove("message-search-highlight");
+          }, 1500);
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("chat-search", handleChatSearch);
+
+    return () => {
+      window.removeEventListener("chat-search", handleChatSearch);
+    };
+  }, []);
   useEffect(() => {
     if (scrollProgressRef.current) {
       scrollProgressRef.current.scrollIntoView({ behavior: "smooth" });
@@ -127,8 +156,15 @@ const SingleChatMessageContainer = () => {
   const checkIfAudio = (filePath) => {
     if (!filePath) return false;
     const pathWithoutParams = filePath.split("?")[0];
-    const audioRegex = /\.(mp3|wav|ogg|webm|m4a|aac)$/i;
+    const audioRegex = /\.(mp3|wav|ogg|m4a|aac)$/i;
     return audioRegex.test(pathWithoutParams);
+  };
+
+  const checkIfVideo = (filePath) => {
+    if (!filePath) return false;
+    const pathWithoutParams = filePath.split("?")[0];
+    const videoRegex = /\.(mp4|mov|avi|wmv|flv|mkv|webm|3gp)$/i;
+    return videoRegex.test(pathWithoutParams);
   };
 
   const renderMessages = () => {
@@ -183,9 +219,16 @@ const SingleChatMessageContainer = () => {
   };
 
   const handleDownload = (url) => {
+    let downloadUrl = url;
+    if (url.includes("cloudinary.com") && url.includes("/upload/")) {
+      downloadUrl = url.replace("/upload/", "/upload/fl_attachment/");
+    }
+
+    // Create a temporary anchor element
     const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "");
+    link.href = downloadUrl;
+    link.setAttribute("download", ""); // This attribute is often ignored for cross-origin URLs
+    link.setAttribute("target", "_blank"); // Open in new tab as fallback
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -267,6 +310,14 @@ const SingleChatMessageContainer = () => {
             ) : checkIfAudio(message.fileUrl) ? (
               <div className="audio-container" style={{ width: "300px" }}>
                 <audio controls src={message.fileUrl} style={{ width: "100%" }} />
+              </div>
+            ) : checkIfVideo(message.fileUrl) ? (
+              <div className="video-container" style={{ width: "300px" }}>
+                <video
+                  controls
+                  src={message.fileUrl}
+                  style={{ width: "100%", borderRadius: "10px" }}
+                />
               </div>
             ) : (
               <div className="file-container">
@@ -376,6 +427,14 @@ const SingleChatMessageContainer = () => {
             ) : checkIfAudio(message.fileUrl) ? (
               <div className="audio-container" style={{ width: "300px" }}>
                 <audio controls src={message.fileUrl} style={{ width: "100%" }} />
+              </div>
+            ) : checkIfVideo(message.fileUrl) ? (
+              <div className="video-container" style={{ width: "300px" }}>
+                <video
+                  controls
+                  src={message.fileUrl}
+                  style={{ width: "100%", borderRadius: "10px" }}
+                />
               </div>
             ) : (
               <div className="file-container">

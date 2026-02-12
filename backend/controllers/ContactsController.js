@@ -148,6 +148,20 @@ export const getContactsForDMList = async (request, response, next) => {
           lastMessageType: { $first: "$messageType" }, // Capture messageType
           lastMessageContent: { $first: "$content" }, // Capture text content
           lastFileUrl: { $first: "$fileUrl" }, // Capture file URL if applicable
+          unreadCount: {
+            $sum: {
+              $cond: {
+                if: {
+                  $and: [
+                    { $eq: ["$recipient", userId] },
+                    { $ne: ["$status", "read"] },
+                  ],
+                },
+                then: 1,
+                else: 0,
+              },
+            },
+          },
         },
       },
       {
@@ -171,6 +185,7 @@ export const getContactsForDMList = async (request, response, next) => {
               else: "$lastFileUrl", // Otherwise, return file URL
             },
           },
+          unreadCount: 1,
           email: "$contactInfo.email",
           firstName: "$contactInfo.firstName",
           lastName: "$contactInfo.lastName",

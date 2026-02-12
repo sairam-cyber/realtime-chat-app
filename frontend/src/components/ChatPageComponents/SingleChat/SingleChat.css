@@ -1,8 +1,54 @@
+/* ========================================
+   SINGLE CHAT CONTAINER
+   Glassmorphism Chat Window
+   ======================================== */
+
 .single-chat {
-  background-color: #222e35;
+  background: var(--glass-surface);
+  backdrop-filter: var(--blur-lg);
+  -webkit-backdrop-filter: var(--blur-lg);
   height: 100%;
   width: 65%;
   display: flex;
   flex-direction: column;
-  /* justify-content: space-between; */
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  transition: all var(--transition-base);
+  position: relative;
+}
+
+.single-chat:hover {
+  border-color: var(--glass-border-hover);
+}
+
+/* ========== RESPONSIVE DESIGN ========== */
+
+/* Tablet (768px - 1024px) */
+@media (max-width: 1024px) {
+  .single-chat {
+    width: 65%;
+  }
+}
+
+/* Mobile (max-width: 768px) */
+@media (max-width: 768px) {
+  .single-chat {
+    width: 100%;
+    border-radius: 0;
+    display: none;
+    /* Hidden by default on mobile, shown when chat is selected */
+  }
+
+  .single-chat.active {
+    display: flex;
+  }
+}
+
+/* Small Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+  .single-chat {
+    border-radius: 0;
+  }
 }

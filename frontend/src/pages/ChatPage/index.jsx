@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 const ChatPage = () => {
   const {
     userInfo,
+    selectedChatType,
     setSelectedChatData,
     setSelectedChatType,
     setSelectedChatMessages,
@@ -41,7 +42,7 @@ const ChatPage = () => {
   }, []);
 
   return (
-    <div className="chat-page">
+    <div className={`chat-page ${selectedChatType ? "action-chat" : ""}`}>
       <LeftSidebar />
       <ChatList />
       <SingleChat />

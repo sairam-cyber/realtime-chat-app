@@ -13,6 +13,8 @@ export const createChatSlice = (set, get) => ({
   // showFileUploadPlaceholder: false,
   uploadFileName: undefined,
   uploadTargetId: undefined,
+  isAIFeaturesEnabled: false,
+  setIsAIFeaturesEnabled: (isAIFeaturesEnabled) => set({ isAIFeaturesEnabled }),
   friendRequests: [],
   friendRequestsCount: 0,
   setFriendRequestsCount: (friendRequestsCount) => set({ friendRequestsCount }),
@@ -84,11 +86,27 @@ export const createChatSlice = (set, get) => ({
     const dmContacts = get().directMessagesContacts;
     const data = dmContacts.find((contact) => contact._id === fromId);
     const index = dmContacts.findIndex((contact) => contact._id === fromId);
+
     if (index !== -1 && index !== undefined) {
       dmContacts.splice(index, 1);
       dmContacts.unshift(data);
     } else {
       dmContacts.unshift(fromData);
+    }
+
+    const { selectedChatData, selectedChatType } = get();
+
+    if (
+      !selectedChatData ||
+      selectedChatType !== "contact" ||
+      selectedChatData._id !== fromId
+    ) {
+      if (message.sender._id !== userId) {
+        const contact = dmContacts.find((contact) => contact._id === fromId);
+        if (contact) {
+          contact.unreadCount = (contact.unreadCount || 0) + 1;
+        }
+      }
     }
     set({ directMessagesContacts: dmContacts });
   },

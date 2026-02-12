@@ -9,7 +9,7 @@ const SingleChat = () => {
   const { selectedChatType, userInfo } = useAppStore();
 
   return (
-    <div className="single-chat">
+    <div className={`single-chat ${selectedChatType ? "active" : ""}`}>
       {selectedChatType ? (
         <>
           <SingleChatHeader />

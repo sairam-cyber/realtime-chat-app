@@ -1,7 +1,56 @@
+/* ========================================
+   CHAT PAGE - MAIN LAYOUT CONTAINER
+   Glassmorphism Chat Interface
+   ======================================== */
+
 .chat-page {
   width: 100%;
   height: 100%;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  background: #1a1f2e;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .chat-page {
+    position: relative;
+    flex-direction: column-reverse;
+  }
+
+  /* List View State (No active chat) */
+  .chat-page:not(.action-chat) .single-chat {
+    display: none;
+  }
+
+  .chat-page:not(.action-chat) .left-sidebar {
+    width: 100%;
+    height: 70px;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 0 1rem;
+    z-index: 100;
+  }
+
+  .chat-page:not(.action-chat) .chat-list {
+    width: 100%;
+    height: calc(100% - 70px);
+  }
+
+  /* Chat View State (Active chat) */
+  .chat-page.action-chat .left-sidebar {
+    display: none;
+  }
+
+  .chat-page.action-chat .chat-list {
+    display: none;
+  }
+
+  .chat-page.action-chat .single-chat {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
 }

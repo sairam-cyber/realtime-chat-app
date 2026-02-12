@@ -2,6 +2,7 @@ import Message from "../models/MessageModel.js";
 import User from "../models/UserModel.js";
 import { v2 as cloudinary } from "cloudinary";
 import { mkdirSync, renameSync } from "fs";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 export const getMessages = async (request, response, next) => {
   try {
@@ -76,6 +77,117 @@ export const scheduleMessage = async (request, response, next) => {
     });
 
     return response.status(200).json({ message });
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json({ error: error.message });
+  }
+};
+
+export const getSmartReply = async (request, response, next) => {
+  try {
+    const user1 = request.userId;
+    const user2 = request.body.id;
+
+    console.log("GEMINI_API_KEY present:", !!process.env.GEMINI_API_KEY);
+
+    if (!process.env.GEMINI_API_KEY) {
+      return response.status(500).json({ error: "Gemini API Key is missing" });
+    }
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const messages = await Message.find({
+      $or: [
+        { sender: user1, recipient: user2 },
+        { sender: user2, recipient: user1 },
+      ],
+    })
+      .sort({ timestamp: -1 }) // Get latest messages first
+      .limit(10); // Limit to last 10 messages
+
+    if (messages.length === 0) {
+      return response.status(200).json({ reply: "Hi there!" });
+    }
+
+    // Reverse to chronological order for the AI
+    const history = messages.reverse().map(msg =>
+      `${msg.sender.toString() === user1 ? "Me" : "Other"}: ${msg.content || "[File]"}`
+    ).join("\n");
+
+    const prompt = `Analyze the conversation below and suggest a single, concise sentence as a reply for "Me". Keep it casual and direct.\n\nConversation:\n${history}\n\nReply:`;
+
+    const result = await model.generateContent(prompt);
+    const reply = result.response.text().trim();
+
+    return response.status(200).json({ reply });
+
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json({ error: error.message });
+  }
+};
+
+export const summarizeChat = async (request, response, next) => {
+  try {
+    const user1 = request.userId;
+    const user2 = request.body.id;
+
+    console.log("GEMINI_API_KEY present:", !!process.env.GEMINI_API_KEY);
+
+    if (!process.env.GEMINI_API_KEY) {
+      return response.status(500).json({ error: "Gemini API Key is missing" });
+    }
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const messages = await Message.find({
+      $or: [
+        { sender: user1, recipient: user2 },
+        { sender: user2, recipient: user1 },
+      ],
+    })
+      .sort({ timestamp: -1 })
+      .limit(10);
+
+    if (messages.length === 0) {
+      return response.status(200).json({ summary: "No messages to summarize yet." });
+    }
+
+    const history = messages.reverse().map(msg =>
+      `${msg.sender.toString() === user1 ? "User A" : "User B"}: ${msg.content || "[File]"}`
+    ).join("\n");
+
+    const prompt = `Summarize the following conversation in 2-3 sentences. Focus on the main topic and key points.\n\nConversation:\n${history}\n\nSummary:`;
+
+    const result = await model.generateContent(prompt);
+    const summary = result.response.text().trim();
+
+    return response.status(200).json({ summary });
+
+  } catch (error) {
+    console.log(error);
+    return response.status(500).json({ error: error.message });
+  }
+};
+
+export const markMessagesAsRead = async (request, response, next) => {
+  try {
+    const user1 = request.userId;
+    const user2 = request.body.id;
+
+    if (!user1 || !user2) {
+      return response.status(400).json({ error: "Both user IDs are required" });
+    }
+
+    // Update messages where recipient is user1 and sender is user2
+    await Message.updateMany(
+      { sender: user2, recipient: user1, status: { $ne: "read" } },
+      { $set: { status: "read" } }
+    );
+
+    return response.status(200).json({ message: "Messages marked as read" });
   } catch (error) {
     console.log(error);
     return response.status(500).json({ error: error.message });

@@ -1,0 +1,19 @@
+[
+  {
+    "sender": "1770918526245",
+    "content": "hii",
+    "recipient": "1770918572925",
+    "messageType": "text",
+    "_id": "1770918633188",
+    "createdAt": "2026-02-12T17:50:33.189Z",
+    "updatedAt": "2026-02-12T17:50:33.189Z"
+  },
+  {
+    "sender": "1770918572925",
+    "content": "hii",
+    "messageType": "text",
+    "_id": "1770918645734",
+    "createdAt": "2026-02-12T17:50:45.734Z",
+    "updatedAt": "2026-02-12T17:50:45.735Z"
+  }
+]

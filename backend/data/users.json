@@ -1,0 +1,31 @@
+[
+  {
+    "email": "sai@gmail.com",
+    "password": "$2b$10$oUY6fW/s3pVCMP39qyAiLOqCRK1dqC5Pmg9B4ADteQDfOBrkeUDYG",
+    "salt": "$2b$10$iExftZTH.89c7LKVLwwMd.",
+    "profileSetup": true,
+    "_id": "1770918526245",
+    "createdAt": "2026-02-12T17:48:46.245Z",
+    "updatedAt": "2026-02-12T17:50:01.873Z",
+    "firstName": "SAI",
+    "lastName": "BEBARTA",
+    "color": 0,
+    "image": null,
+    "$push": {
+      "friendRequests": "namish@gmail.com"
+    }
+  },
+  {
+    "email": "namish@gmail.com",
+    "password": "$2b$10$QVFSFkq5bgUxLdJgNx08K.fNDsmAwR/8K4ZpSBmMWOEThlBnIafP.",
+    "salt": "$2b$10$OH.wYP/jcERhzdun9JAybu",
+    "profileSetup": true,
+    "_id": "1770918572925",
+    "createdAt": "2026-02-12T17:49:32.925Z",
+    "updatedAt": "2026-02-12T17:49:47.642Z",
+    "firstName": "namish",
+    "lastName": "sahu",
+    "color": 0,
+    "image": null
+  }
+]

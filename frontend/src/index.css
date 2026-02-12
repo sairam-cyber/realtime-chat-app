@@ -1,14 +1,74 @@
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+/* ========================================
+   GLOBAL DESIGN SYSTEM - GLASSMORPHISM THEME
+   Modern, Professional, Premium UI/UX
+   ======================================== */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  /* ===== TYPOGRAPHY ===== */
+  font-family: 'Inter', 'Geist', system-ui, -apple-system, sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.01em;
 
-  --root-bg-color: #0c1317;
-  --app-container-bg-color: #111b21;
-  --app-container-text-color: #e9edef;
+  /* ===== PRIMARY COLOR PALETTE ===== */
+  --primary-bg: #1a1f2e;
+  /* Dark Navy Background */
+  --secondary-bg: #151922;
+  /* Darker Navy */
+  --surface-bg: #232936;
+  /* Elevated Surface */
+
+  /* ===== GLASSMORPHISM SURFACES ===== */
+  --glass-surface: rgba(35, 41, 54, 0.8);
+  --glass-surface-light: rgba(45, 52, 68, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-border-hover: rgba(255, 255, 255, 0.15);
+
+  /* ===== ACCENT COLORS ===== */
+  --accent-primary: #6366f1;
+  /* Electric Indigo */
+  --accent-secondary: #818cf8;
+  /* Lighter Indigo */
+  --accent-glow: rgba(99, 102, 241, 0.3);
+
+  /* ===== TEXT COLORS ===== */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --text-disabled: #64748b;
+
+  /* ===== FUNCTIONAL COLORS ===== */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+
+  /* ===== SHADOWS & EFFECTS ===== */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.15);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.25);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.35);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+
+  /* ===== BLUR EFFECTS ===== */
+  --blur-sm: blur(8px);
+  --blur-md: blur(12px);
+  --blur-lg: blur(16px);
+
+  /* ===== TRANSITIONS ===== */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.25s ease;
+  --transition-slow: 0.35s ease;
+}
+
+/* ===== GLOBAL RESETS ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
@@ -16,8 +76,44 @@ body {
   padding: 0;
   width: 100vw;
   height: 100vh;
+  background: var(--primary-bg);
+  color: var(--text-primary);
+  overflow: hidden;
 }
 
+/* ===== CUSTOM SCROLLBAR - MINIMALIST DESIGN ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  transition: background var(--transition-base);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Firefox Scrollbar */
 * {
-  box-sizing: border-box;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
+}
+
+/* ===== SELECTION STYLING ===== */
+::selection {
+  background: var(--accent-primary);
+  color: white;
+}
+
+::-moz-selection {
+  background: var(--accent-primary);
+  color: white;
 }

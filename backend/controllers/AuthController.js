@@ -133,6 +133,9 @@ export const updateProfile = async (request, response, next) => {
   try {
     const { userId } = request;
     const { firstName, lastName, color, image } = request.body;
+
+    console.log("Updating profile for user:", userId);
+    console.log("Received image URL:", image);
     if (!firstName || !lastName) {
       return response
         .status(400)
@@ -144,6 +147,9 @@ export const updateProfile = async (request, response, next) => {
       { firstName, lastName, color, image, profileSetup: true },
       { new: true, runValidators: true }
     );
+
+    console.log("Profile updated successfully. Image saved:", userData.image);
+
     return response.status(200).json({
       id: userData.id,
       email: userData.email,

@@ -15,6 +15,7 @@ import {
   GET_ALL_CONTACTS_ROUTE,
   GET_DM_CONTACTS_ROUTE,
   GET_USER_GROUPS_ROUTE,
+  MARK_MESSAGES_READ_ROUTE,
   SEARCH_CONTACTS_ROUTE,
   SEARCH_DM_CONTACTS_ROUTE,
   SEARCH_GROUPS_ROUTE,
@@ -83,8 +84,38 @@ const ChatList = () => {
     selectedChatMessages,
   ]);
 
-  const { setSelectedChatType, setSelectedChatData, selectedChatData } =
+  const { setSelectedChatType, setSelectedChatData, selectedChatData, selectedChatType } =
     useAppStore();
+
+  useEffect(() => {
+    const markMessagesAsRead = async () => {
+      if (selectedChatData && selectedChatType === "contact") {
+        const contact = directMessagesContacts.find(
+          (c) => c._id === selectedChatData._id
+        );
+        if (contact && contact.unreadCount > 0) {
+          try {
+            await apiClient.post(
+              MARK_MESSAGES_READ_ROUTE,
+              { id: selectedChatData._id },
+              { withCredentials: true }
+            );
+            setDirectMessagesContacts(
+              directMessagesContacts.map((c) =>
+                c._id === selectedChatData._id
+                  ? { ...c, unreadCount: 0 }
+                  : c
+              )
+            );
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
+    };
+    markMessagesAsRead();
+  }, [selectedChatData, selectedChatType, setDirectMessagesContacts, directMessagesContacts]);
+
   const [openNewContactModal, setOpenNewContactModal] = useState(false);
   const [openAddContactModal, setOpenAddContactModal] = useState(false);
   const [openCreateGroupModal, setOpenCreateGroupModal] = useState(false);
@@ -366,9 +397,8 @@ const ChatList = () => {
                   ref={addContactIconRef}
                 >
                   <div
-                    className={`tooltip sub-header-icon ${
-                      openAddContactModal ? "active-modal" : ""
-                    }`}
+                    className={`tooltip sub-header-icon ${openAddContactModal ? "active-modal" : ""
+                      }`}
                   >
                     {/*<FaAddressCard />*/}
                     <IoPersonAdd className="add-new-friend" />
@@ -382,9 +412,8 @@ const ChatList = () => {
                   ref={createGroupIconRef}
                 >
                   <div
-                    className={`tooltip sub-header-icon ${
-                      openCreateGroupModal ? "active-modal" : ""
-                    }`}
+                    className={`tooltip sub-header-icon ${openCreateGroupModal ? "active-modal" : ""
+                      }`}
                   >
                     {/*<FaAddressCard />*/}
                     <MdGroupAdd />
@@ -399,9 +428,8 @@ const ChatList = () => {
                   ref={newContactIconRef}
                 >
                   <div
-                    className={`tooltip sub-header-icon ${
-                      openNewContactModal ? "active-modal" : ""
-                    }`}
+                    className={`tooltip sub-header-icon ${openNewContactModal ? "active-modal" : ""
+                      }`}
                   >
                     <RiChatNewFill />
                     <span className="tooltiptext">New Chat</span>
@@ -461,9 +489,8 @@ const ChatList = () => {
                         </div>
 
                         <div
-                          className={`submit-button ${
-                            groupName.length <= 0 ? "modal-icon-disabled" : ""
-                          }`}
+                          className={`submit-button ${groupName.length <= 0 ? "modal-icon-disabled" : ""
+                            }`}
                           onClick={createGroup}
                         >
                           Create
@@ -494,9 +521,8 @@ const ChatList = () => {
                           className="modal-input"
                         />
                         <div
-                          className={`sub-header-icon ${
-                            contactTag.length <= 0 ? "modal-icon-disabled" : ""
-                          }`}
+                          className={`sub-header-icon ${contactTag.length <= 0 ? "modal-icon-disabled" : ""
+                            }`}
                           onClick={() => sendFriendRequestToContact(contactTag)}
                         >
                           <IoMdAddCircle />
@@ -559,13 +585,13 @@ const ChatList = () => {
                                     <div className="select-contact-image no-avatar">
                                       {contact.firstName && contact.lastName
                                         ? `${contact.firstName.charAt(
-                                            0
-                                          )} ${contact.lastName.charAt(0)}`
+                                          0
+                                        )} ${contact.lastName.charAt(0)}`
                                         : contact.firstName
-                                        ? contact.firstName.charAt(0)
-                                        : contact.lastName
-                                        ? contact.lastName.charAt(0)
-                                        : contact.email.charAt(0)}
+                                          ? contact.firstName.charAt(0)
+                                          : contact.lastName
+                                            ? contact.lastName.charAt(0)
+                                            : contact.email.charAt(0)}
                                     </div>
                                   )}
                                 </div>
@@ -626,25 +652,22 @@ const ChatList = () => {
             </div>
             <div className={`filters ${searching ? "searching" : ""}`}>
               <div
-                className={`filter ${
-                  activeFilter === "all" ? "active-filter" : ""
-                }`}
+                className={`filter ${activeFilter === "all" ? "active-filter" : ""
+                  }`}
                 onClick={() => handleFilterClick("all")}
               >
                 All
               </div>
               <div
-                className={`filter ${
-                  activeFilter === "dms" ? "active-filter" : ""
-                }`}
+                className={`filter ${activeFilter === "dms" ? "active-filter" : ""
+                  }`}
                 onClick={() => handleFilterClick("dms")}
               >
                 DMs
               </div>
               <div
-                className={`filter ${
-                  activeFilter === "groups" ? "active-filter" : ""
-                }`}
+                className={`filter ${activeFilter === "groups" ? "active-filter" : ""
+                  }`}
                 onClick={() => handleFilterClick("groups")}
               >
                 Groups

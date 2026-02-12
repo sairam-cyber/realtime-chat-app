@@ -35,10 +35,10 @@ const Chat = ({ contact, isGroup = false, isActive = false }) => {
               {contact.firstName && contact.lastName
                 ? `${contact.firstName.charAt(0)} ${contact.lastName.charAt(0)}`
                 : contact.firstName
-                ? contact.firstName.charAt(0)
-                : contact.lastName
-                ? contact.lastName.charAt(0)
-                : contact.email.charAt(0)}
+                  ? contact.firstName.charAt(0)
+                  : contact.lastName
+                    ? contact.lastName.charAt(0)
+                    : contact.email.charAt(0)}
             </div>
           )}
         </div>
@@ -56,44 +56,44 @@ const Chat = ({ contact, isGroup = false, isActive = false }) => {
             {contact.name}
             <div className="date">
               {contact.lastMessage?.timestamp &&
-              moment(Date.now()).format("YYYY-MM-DD") ===
+                moment(Date.now()).format("YYYY-MM-DD") ===
                 moment(contact.lastMessage?.timestamp).format("YYYY-MM-DD")
                 ? moment(contact.lastMessage?.timestamp).format("LT")
                 : moment(Date.now())
-                    .subtract(1, "days")
-                    .format("YYYY-MM-DD") ===
+                  .subtract(1, "days")
+                  .format("YYYY-MM-DD") ===
                   moment(contact.lastMessage?.timestamp).format("YYYY-MM-DD")
-                ? "Yesterday"
-                : moment(Date.now())
+                  ? "Yesterday"
+                  : moment(Date.now())
                     .subtract(2, "days")
                     .format("YYYY-MM-DD") ===
                     moment(contact.lastMessage?.timestamp).format(
                       "YYYY-MM-DD"
                     ) ||
-                  moment(Date.now())
-                    .subtract(3, "days")
-                    .format("YYYY-MM-DD") ===
+                    moment(Date.now())
+                      .subtract(3, "days")
+                      .format("YYYY-MM-DD") ===
                     moment(contact.lastMessage?.timestamp).format(
                       "YYYY-MM-DD"
                     ) ||
-                  moment(Date.now())
-                    .subtract(4, "days")
-                    .format("YYYY-MM-DD") ===
+                    moment(Date.now())
+                      .subtract(4, "days")
+                      .format("YYYY-MM-DD") ===
                     moment(contact.lastMessage?.timestamp).format(
                       "YYYY-MM-DD"
                     ) ||
-                  moment(Date.now())
-                    .subtract(5, "days")
-                    .format("YYYY-MM-DD") ===
+                    moment(Date.now())
+                      .subtract(5, "days")
+                      .format("YYYY-MM-DD") ===
                     moment(contact.lastMessage?.timestamp).format(
                       "YYYY-MM-DD"
                     ) ||
-                  moment(Date.now())
-                    .subtract(6, "days")
-                    .format("YYYY-MM-DD") ===
+                    moment(Date.now())
+                      .subtract(6, "days")
+                      .format("YYYY-MM-DD") ===
                     moment(contact.lastMessage?.timestamp).format("YYYY-MM-DD")
-                ? moment(contact.lastMessage?.timestamp).format("dddd")
-                : moment(contact.lastMessage?.timestamp).format("L")}
+                    ? moment(contact.lastMessage?.timestamp).format("dddd")
+                    : moment(contact.lastMessage?.timestamp).format("L")}
             </div>
           </div>
           <div className={`last-message ${isActive ? "active-chat" : ""}`}>
@@ -111,52 +111,57 @@ const Chat = ({ contact, isGroup = false, isActive = false }) => {
             {contact.firstName && contact.lastName
               ? `${contact.firstName} ${contact.lastName}`
               : contact.firstName
-              ? contact.firstName
-              : contact.lastName
-              ? contact.lastName
-              : contact.email}
+                ? contact.firstName
+                : contact.lastName
+                  ? contact.lastName
+                  : contact.email}
 
             <div className="date">
               {contact.lastMessageTime &&
-              moment(Date.now()).format("YYYY-MM-DD") ===
+                moment(Date.now()).format("YYYY-MM-DD") ===
                 moment(contact.lastMessageTime).format("YYYY-MM-DD")
                 ? moment(contact.lastMessageTime).format("LT")
                 : moment(Date.now())
-                    .subtract(1, "days")
-                    .format("YYYY-MM-DD") ===
+                  .subtract(1, "days")
+                  .format("YYYY-MM-DD") ===
                   moment(contact.lastMessageTime).format("YYYY-MM-DD")
-                ? "Yesterday"
-                : moment(Date.now())
+                  ? "Yesterday"
+                  : moment(Date.now())
                     .subtract(2, "days")
                     .format("YYYY-MM-DD") ===
                     moment(contact.lastMessageTime).format("YYYY-MM-DD") ||
-                  moment(Date.now())
-                    .subtract(3, "days")
-                    .format("YYYY-MM-DD") ===
+                    moment(Date.now())
+                      .subtract(3, "days")
+                      .format("YYYY-MM-DD") ===
                     moment(contact.lastMessageTime).format("YYYY-MM-DD") ||
-                  moment(Date.now())
-                    .subtract(4, "days")
-                    .format("YYYY-MM-DD") ===
+                    moment(Date.now())
+                      .subtract(4, "days")
+                      .format("YYYY-MM-DD") ===
                     moment(contact.lastMessageTime).format("YYYY-MM-DD") ||
-                  moment(Date.now())
-                    .subtract(5, "days")
-                    .format("YYYY-MM-DD") ===
+                    moment(Date.now())
+                      .subtract(5, "days")
+                      .format("YYYY-MM-DD") ===
                     moment(contact.lastMessageTime).format("YYYY-MM-DD") ||
-                  moment(Date.now())
-                    .subtract(6, "days")
-                    .format("YYYY-MM-DD") ===
+                    moment(Date.now())
+                      .subtract(6, "days")
+                      .format("YYYY-MM-DD") ===
                     moment(contact.lastMessageTime).format("YYYY-MM-DD")
-                ? moment(contact.lastMessageTime).format("dddd")
-                : moment(contact.lastMessageTime).format("L")}
+                    ? moment(contact.lastMessageTime).format("dddd")
+                    : moment(contact.lastMessageTime).format("L")}
             </div>
           </div>
-          <div className={`last-message ${isActive ? "active-chat" : ""}`}>
-            {contact.lastMessageType === "file" && (
-              <MdFolderZip className="last-message-file" />
+          <div className="chat-info-bottom">
+            <div className={`last-message ${isActive ? "active-chat" : ""}`}>
+              {contact.lastMessageType === "file" && (
+                <MdFolderZip className="last-message-file" />
+              )}
+              {contact.lastMessageType === "text"
+                ? `${shortenLastMessage(contact.lastMessage)}`
+                : `${getFileExtensionFromUrl(contact.lastMessage)}`}
+            </div>
+            {contact.unreadCount > 0 && (
+              <div className="unread-count-badge">{contact.unreadCount}</div>
             )}
-            {contact.lastMessageType === "text"
-              ? `${shortenLastMessage(contact.lastMessage)}`
-              : `${getFileExtensionFromUrl(contact.lastMessage)}`}
           </div>
         </div>
       )}

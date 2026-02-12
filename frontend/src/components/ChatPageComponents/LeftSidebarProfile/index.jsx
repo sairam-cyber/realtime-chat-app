@@ -62,6 +62,7 @@ const LeftSidebarProfile = () => {
   const saveChanges = async () => {
     if (validateProfile()) {
       try {
+        console.log("Saving profile with image:", image);
         const response = await apiClient.post(
           UPDATE_PROFILE_ROUTE,
           {
@@ -128,20 +129,18 @@ const LeftSidebarProfile = () => {
         alert("File size exceeds 10MB");
         return;
       }
-      // console.log("file:");
-      // console.log(file);
-
       if (file) {
-        // setShowFileUploadPlaceholder(true);
-
         fileUrl = await upload(file, userInfo.id);
 
         if (fileUrl) {
           setImage(fileUrl);
+          console.log("Image uploaded to Cloudinary:", fileUrl);
+          toast.success("Image uploaded! Click 'Save Changes' to update your profile.");
         }
       }
     } catch (error) {
       console.log(error);
+      toast.error("Failed to upload image. Please try again.");
     }
   };
 
@@ -167,29 +166,46 @@ const LeftSidebarProfile = () => {
               <div className="profile-image uploading">
                 {`${uploadProgress.toFixed(2)}%`}
               </div>
-            ) : image ? (
-              <img
-                src={image}
-                alt=""
-                // alt="profile-image"
-                className="profile-image"
-                onClick={handleImageClick}
-              />
             ) : (
-              <div className="profile-image" onClick={handleImageClick}>
-                <svg
-                  viewBox="0 0 340 340"
-                  // className="profile-image-default-user-svg"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="340"
-                  height="340"
-                >
-                  <path
-                    fill="#2c2e3b"
-                    d="m169,.5a169,169 0 1,0 2,0zm0,86a76,76 0 1
-1-2,0zM57,287q27-35 67-35h92q40,0 67,35a164,164 0 0,1-226,0"
+              <div className="profile-image-wrapper" onClick={handleImageClick}>
+                {image ? (
+                  <img
+                    src={image}
+                    alt=""
+                    className="profile-image"
                   />
-                </svg>
+                ) : (
+                  <div className="profile-image">
+                    <svg
+                      viewBox="0 0 340 340"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="340"
+                      height="340"
+                    >
+                      <path
+                        fill="#2c2e3b"
+                        d="m169,.5a169,169 0 1,0 2,0zm0,86a76,76 0 1
+1-2,0zM57,287q27-35 67-35h92q40,0 67,35a164,164 0 0,1-226,0"
+                      />
+                    </svg>
+                  </div>
+                )}
+                <div className="camera-icon-overlay">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                  </svg>
+                </div>
               </div>
             )}
             <input
@@ -231,9 +247,8 @@ const LeftSidebarProfile = () => {
         </div>
         <div className="info-input-container">
           <button
-            className={`info-button ${
-              firstName.length && lastName.length ? "" : "button-disabled"
-            }`}
+            className={`info-button ${firstName.length && lastName.length ? "" : "button-disabled"
+              }`}
             onClick={saveChanges}
           >
             Save Changes

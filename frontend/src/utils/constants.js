@@ -20,6 +20,9 @@ export const GET_CONTACT_FILES_ROUTE = `${CONTACTS_ROUTES}/get-contact-files`;
 export const MESSAGES_ROUTES = "api/messages";
 export const GET_ALL_MESSAGES_ROUTE = `${MESSAGES_ROUTES}/get-messages`;
 export const SCHEDULE_MESSAGE_ROUTE = `${MESSAGES_ROUTES}/schedule-message`;
+export const SMART_REPLY_ROUTE = `${MESSAGES_ROUTES}/smart-reply`;
+export const SUMMARIZE_CHAT_ROUTE = `${MESSAGES_ROUTES}/summarize-chat`;
+export const MARK_MESSAGES_READ_ROUTE = `${MESSAGES_ROUTES}/mark-read`;
 
 export const FRIEND_REQUEST_ROUTES = "api/friend-requests";
 export const GET_FRIEND_REQUESTS_ROUTE = `${FRIEND_REQUEST_ROUTES}/get-friend-requests`;

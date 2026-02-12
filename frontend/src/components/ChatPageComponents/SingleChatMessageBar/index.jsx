@@ -5,12 +5,13 @@ import EmojiPicker from "emoji-picker-react";
 import { useEffect, useRef, useState } from "react";
 import { IoMdMic } from "react-icons/io";
 import { MdScheduleSend } from "react-icons/md";
+import { BsMagic, BsFileText } from "react-icons/bs";
 import "./SingleChatMessageBar.css";
 import { useAppStore } from "../../../store";
 import { useSocket } from "../../../context/SocketContext";
 import upload from "../../../lib/upload";
 import { apiClient } from "../../../lib/api-client";
-import { SCHEDULE_MESSAGE_ROUTE } from "../../../utils/constants";
+import { SCHEDULE_MESSAGE_ROUTE, SMART_REPLY_ROUTE, SUMMARIZE_CHAT_ROUTE } from "../../../utils/constants";
 
 const SingleChatMessageBar = () => {
   const emojiRef = useRef();
@@ -26,6 +27,7 @@ const SingleChatMessageBar = () => {
     setActiveChatId,
     setPlaceholderMessage,
     setShowFileUploadPlaceholder,
+    isAIFeaturesEnabled,
   } = useAppStore();
 
   const [message, setMessage] = useState("");
@@ -218,66 +220,134 @@ const SingleChatMessageBar = () => {
     }
   };
 
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
+  const [summaryText, setSummaryText] = useState("");
+  const [loadingAI, setLoadingAI] = useState(false);
+
+  const handleSummarize = async () => {
+    setLoadingAI(true);
+    try {
+      const response = await apiClient.post(
+        SUMMARIZE_CHAT_ROUTE,
+        { id: selectedChatData._id },
+        { withCredentials: true }
+      );
+      if (response.status === 200 && response.data.summary) {
+        setSummaryText(response.data.summary);
+        setShowSummaryModal(true);
+      }
+    } catch (error) {
+      console.error("Error summarizing chat:", error);
+      alert("Failed to summarize chat.");
+    } finally {
+      setLoadingAI(false);
+    }
+  };
+
+  const handleSmartReply = async () => {
+    setLoadingAI(true);
+    try {
+      const response = await apiClient.post(
+        SMART_REPLY_ROUTE,
+        { id: selectedChatData._id },
+        { withCredentials: true }
+      );
+      if (response.status === 200 && response.data.reply) {
+        setMessage(response.data.reply);
+      }
+    } catch (error) {
+      console.error("Error getting smart reply:", error);
+      alert("Failed to get smart reply.");
+    } finally {
+      setLoadingAI(false);
+    }
+  };
+
   return (
-    <div className="message-bar">
-      <div className="message-bar-icon">
-        <div className="emoji-picker-icon" ref={emojiRef}>
-          <RiEmojiStickerLine
-            onClick={() => setEmojiPickerOpen(!emojiPickerOpen)}
-          />
-          <div className="emoji-picker">
-            <EmojiPicker
-              theme="dark"
-              open={emojiPickerOpen}
-              onEmojiClick={handleAddEmoji}
-              autoFocusSearch={false}
+    <>
+      <div className="message-bar">
+        <div className="message-bar-icon">
+          <div className="emoji-picker-icon" ref={emojiRef}>
+            <RiEmojiStickerLine
+              onClick={() => setEmojiPickerOpen(!emojiPickerOpen)}
             />
+            <div className="emoji-picker">
+              <EmojiPicker
+                theme="dark"
+                open={emojiPickerOpen}
+                onEmojiClick={handleAddEmoji}
+                autoFocusSearch={false}
+              />
+            </div>
           </div>
         </div>
-      </div>
-      <button className="message-bar-icon" onClick={handleFileAttachmentClick}>
-        <GrAttachment />
-      </button>
-      <button
-        className="message-bar-icon"
-        onClick={() => setShowScheduleModal(true)}
-        title="Schedule Message"
-      >
-        <MdScheduleSend />
-      </button>
-      <button
-        className={`message-bar-icon ${isRecording ? "recording" : ""}`}
-        onClick={toggleRecording}
-        style={{ color: isRecording ? "red" : "inherit" }}
-        title={isRecording ? "Stop Recording" : "Start Recording"}
-      >
-        <IoMdMic />
-      </button>
-      <input
-        type="file"
-        className="attachment-hidden-input"
-        ref={fileInputRef}
-        onChange={handleFileAttachmentChange}
-      />
-      <div className="message-bar-searchbar">
+        <button className="message-bar-icon" onClick={handleFileAttachmentClick}>
+          <GrAttachment />
+        </button>
+        <button
+          className="message-bar-icon"
+          onClick={() => setShowScheduleModal(true)}
+          title="Schedule Message"
+        >
+          <MdScheduleSend />
+        </button>
+        <button
+          className={`message-bar-icon ${isRecording ? "recording" : ""}`}
+          onClick={toggleRecording}
+          style={{ color: isRecording ? "red" : "inherit" }}
+          title={isRecording ? "Stop Recording" : "Start Recording"}
+        >
+          <IoMdMic />
+        </button>
+
+        {isAIFeaturesEnabled && (
+          <>
+            <button
+              className="message-bar-icon"
+              onClick={handleSummarize}
+              title="Summarize Last 10 Messages"
+              disabled={loadingAI}
+            >
+              <BsFileText />
+            </button>
+            <button
+              className="message-bar-icon"
+              onClick={handleSmartReply}
+              title="Smart Reply"
+              disabled={loadingAI}
+            >
+              <BsMagic />
+            </button>
+          </>
+        )}
+
         <input
-          type="text"
-          placeholder={isRecording ? "Recording audio..." : "Type a message..."}
-          value={message}
-          ref={messageInputRef}
-          onChange={(e) => setMessage(e.target.value)}
-          className="message-bar-search-input"
-          onKeyDown={handleKeyDown}
-          disabled={isRecording}
+          type="file"
+          className="attachment-hidden-input"
+          ref={fileInputRef}
+          accept="image/*,video/*,application/pdf,.doc,.docx,.xls,.xlsx,.txt"
+          onChange={handleFileAttachmentChange}
         />
-      </div>
-      <div className="message-bar-icon" onClick={handleSendMessage}>
-        <IoSend />
+        <div className="message-bar-searchbar">
+          <input
+            type="text"
+            placeholder={isRecording ? "Recording audio..." : "Type a message..."}
+            value={message}
+            ref={messageInputRef}
+            onChange={(e) => setMessage(e.target.value)}
+            className="message-bar-search-input"
+            onKeyDown={handleKeyDown}
+            disabled={isRecording}
+          />
+        </div>
+        <div className="message-bar-icon" onClick={handleSendMessage}>
+          <IoSend />
+        </div>
       </div>
 
       {showScheduleModal && (
-        <div className="schedule-modal-overlay">
-          <div className="schedule-modal">
+        <div className="schedule-modal-overlay" onClick={() => setShowScheduleModal(false)}>
+          <div className="schedule-modal" onClick={(e) => e.stopPropagation()}>
             <h3>Schedule Message</h3>
             <textarea
               placeholder="Type your message here..."
@@ -296,7 +366,19 @@ const SingleChatMessageBar = () => {
           </div>
         </div>
       )}
-    </div>
+
+      {showSummaryModal && (
+        <div className="schedule-modal-overlay" onClick={() => setShowSummaryModal(false)}>
+          <div className="schedule-modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Chat Summary</h3>
+            <p className="summary-text">{summaryText}</p>
+            <div className="schedule-modal-actions">
+              <button onClick={() => setShowSummaryModal(false)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 
