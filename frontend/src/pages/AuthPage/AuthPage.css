@@ -145,6 +145,35 @@
   color: var(--text-muted);
 }
 
+/* Password Input Container for Eye Icon */
+.auth-page .password-input-container {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.auth-page .password-toggle-icon {
+  position: absolute;
+  right: 15px;
+  cursor: pointer;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-base);
+}
+
+.auth-page .password-toggle-icon:hover {
+  color: var(--accent-primary);
+}
+
+/* Ensure input padding accommodates icon */
+.auth-page .password-input-container input {
+  padding-right: 40px;
+}
+
+
 /* ===== FORM CONTAINER ANIMATIONS ===== */
 .auth-page .form-container {
   position: absolute;
@@ -161,6 +190,8 @@
 
 .auth-page .container.right-panel-active .sign-in-container {
   transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
 }
 
 .auth-page .sign-up-container {
