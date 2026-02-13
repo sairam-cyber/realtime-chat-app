@@ -7,7 +7,12 @@ const setupSocket = (server) => {
 
   const io = new SocketIOServer(server, {
     cors: {
-      origin: [process.env.ORIGIN],
+      origin: [
+        process.env.ORIGIN,
+        "https://realtime-chat-7orp1xcck-sairambebartas-projects.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:3000",
+      ].filter(Boolean),
       methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
       credentials: true,
     },
